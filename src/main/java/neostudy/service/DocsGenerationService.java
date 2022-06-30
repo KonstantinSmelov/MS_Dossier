@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import neostudy.dto.PaymentScheduleElement;
 import neostudy.dto.SummaryAppInfo;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -19,17 +18,8 @@ public class DocsGenerationService {
     private final SummaryInfoService summaryInfoService;
     private SummaryAppInfo summaryInfo;
 
-    @Value("${PathToDocs}")
-    private String path;
-
-    public void generatingAllDocs(Long id) {
+    public File generateLoanAppFile(Long id) {
         summaryInfo = summaryInfoService.getSumInfoFromDealClient(id);
-        generateLoanAppFile(id);
-        generateLoanContractFile(id);
-        generateLoanPaymentFile(id);
-    }
-
-    private void generateLoanAppFile(Long id) {
 
         StringBuilder sb = new StringBuilder("\t\t КРЕДИТНАЯ ЗАЯВКА № " + id)
                 .append("\n\t\t----------------------")
@@ -47,21 +37,24 @@ public class DocsGenerationService {
                 .append("\n\tОпыт работы (общий): ").append(summaryInfo.getEmployment().getWorkExperienceTotal())
                 .append("\n\tОпыт работы (текущий): ").append(summaryInfo.getEmployment().getWorkExperienceCurrent());
 
-
-        new File(path + "LoanApps/").mkdirs();
-        File file = new File(path + "LoanApps/кредитное_предложение_" + id + ".txt");
-        log.debug("generateLoanAppFile(): создан файл: {}", path + "LoanApps/кредитное_предложение_" + id + ".txt");
+        File file = null;
+        try {
+            file = File.createTempFile("кредитная_заявка", ".txt", null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        log.debug("generateLoanAppFile(): создан временный файл: {}", file.getAbsoluteFile() + file.getName());
 
         try (FileWriter fileWriter = new FileWriter(file)) {
-            file.createNewFile();
             fileWriter.write(sb.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }
-        log.debug("generateLoanAppFile(): заполнен файл: {}", path + "LoanApps/кредитное_предложение_" + id + ".txt");
+        log.debug("generateLoanAppFile(): заполнен файл: {}", file.getAbsoluteFile() + file.getName());
+        return file;
     }
 
-    private void generateLoanContractFile(Long id) {
+    public File generateLoanContractFile(Long id) {
 
         StringBuilder sb = new StringBuilder("\t\t КРЕДИТНЫЙ ДОГОВОР № " + id)
                 .append("\n\t\t------------------------")
@@ -77,9 +70,13 @@ public class DocsGenerationService {
                 .append("\n\tЗарплатный клиент: ").append(summaryInfo.getIsInsuranceEnabled());
 
 
-        new File(path + "LoanContracts/").mkdirs();
-        File file = new File(path + "LoanContracts/кредитный_договор_" + id + ".txt");
-        log.debug("generateLoanContractFile(): создан файл: {}", path + "LoanContracts/кредитный_договор_" + id + ".txt");
+        File file = null;
+        try {
+            file = File.createTempFile("кредитный_договор", ".txt", null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        log.debug("generateLoanContractFile(): создан файл: {}", file.getAbsoluteFile() + file.getName());
 
         try (FileWriter fileWriter = new FileWriter(file)) {
             file.createNewFile();
@@ -87,10 +84,11 @@ public class DocsGenerationService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        log.debug("generateLoanContractFile(): заполнен файл: {}", path + "LoanContracts/кредитный_договор_" + id + ".txt");
+        log.debug("generateLoanContractFile(): заполнен файл: {}", file.getAbsoluteFile() + file.getName());
+        return file;
     }
 
-    private void generateLoanPaymentFile(Long id) {
+    public File generateLoanPaymentFile(Long id) {
 
         StringBuilder sb = new StringBuilder("\t\t ПЛАТЕЖИ ПО ДОГОВОРУ № " + id)
                 .append("\n\t\t------------------------");
@@ -103,9 +101,13 @@ public class DocsGenerationService {
                     .append("\n\tОстаток долга: ").append(pse.getRemainingDebt());
         }
 
-        new File(path + "LoanPaymentList/").mkdirs();
-        File file = new File(path + "LoanPaymentList/платежи_по_договору_" + id + ".txt");
-        log.debug("generateLoanPaymentFile(): создан файл {}", path + "LoanPaymentList/платежи_по_договору_" + id + ".txt");
+        File file = null;
+        try {
+            file = File.createTempFile("платежи_по_договору", ".txt", null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        log.debug("generateLoanPaymentFile(): создан файл {}", file.getAbsoluteFile() + file.getName());
 
         try (FileWriter fileWriter = new FileWriter(file)) {
             file.createNewFile();
@@ -113,6 +115,7 @@ public class DocsGenerationService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        log.debug("generateLoanPaymentFile(): заполнен файл {}", path + "LoanPaymentList/платежи_по_договору_" + id + ".txt");
+        log.debug("generateLoanPaymentFile(): заполнен файл {}", file.getAbsoluteFile() + file.getName());
+        return file;
     }
 }

@@ -15,6 +15,7 @@ import java.io.File;
 public class MailSenderImpl implements MailSender {
 
     private final JavaMailSender javaMailSender;
+    private final DocsGenerationService docsGenerationService;
 
     @Override
     public void sendEmail(String to, String subject, String text) {
@@ -27,13 +28,14 @@ public class MailSenderImpl implements MailSender {
     }
 
     @Override
-    public void sendEmailWithAttachment(String to, String subject, String text, String[] pathToAttachment) {
+    public void sendEmailWithAttachment(String to, String subject, String text, Long id) {
 
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper;
-        File file1 = new File(pathToAttachment[0]);
-        File file2 = new File(pathToAttachment[1]);
-        File file3 = new File(pathToAttachment[2]);
+
+        File file1 = docsGenerationService.generateLoanAppFile(id);
+        File file2 = docsGenerationService.generateLoanContractFile(id);
+        File file3 = docsGenerationService.generateLoanPaymentFile(id);
         try {
             helper = new MimeMessageHelper(message, true);
             helper.setFrom("superbank@internet.ru");
@@ -43,9 +45,13 @@ public class MailSenderImpl implements MailSender {
             helper.addAttachment(file1.getName(), file1);
             helper.addAttachment(file2.getName(), file2);
             helper.addAttachment(file3.getName(), file3);
+            javaMailSender.send(message);
         } catch (MessagingException e) {
             e.printStackTrace();
+        } finally {
+            file1.delete();
+            file2.delete();
+            file3.delete();
         }
-        javaMailSender.send(message);
     }
 }

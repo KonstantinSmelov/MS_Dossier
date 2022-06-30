@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import neostudy.dto.EmailMessage;
 import neostudy.feignclient.DealClient;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
@@ -18,10 +17,6 @@ public class KafkaListeners {
     private final ObjectMapper objectMapper;
     private final MailSender mailSender;
     private final DealClient dealClient;
-    private final DocsGenerationService docsGenerationService;
-
-    @Value("${PathToDocs}")
-    private String path;
 
     @KafkaListener(topics = {"finish-registration", "create-documents", "send-documents",
             "send-ses", "credit-issued", "application-denied"}, groupId = "groupId")
@@ -32,10 +27,6 @@ public class KafkaListeners {
         log.debug("listener(): создали EmailMessage: {}", emailMessage);
 
         StringBuilder body;
-        String[] pathToAttachments = new String[3];
-        pathToAttachments[0] = path + "LoanApps/кредитное_предложение_" + emailMessage.getApplicationId() + ".txt";
-        pathToAttachments[1] = path + "LoanContracts/кредитный_договор_" + emailMessage.getApplicationId() + ".txt";
-        pathToAttachments[2] = path + "LoanPaymentList/платежи_по_договору_" + emailMessage.getApplicationId() + ".txt";
 
         switch (emailMessage.getTheme()) {
             case FINISH_REGISTRATION:
@@ -56,8 +47,7 @@ public class KafkaListeners {
                 body = new StringBuilder("Вам высланы доументы по заявке номер " + emailMessage.getApplicationId() + "\n");
                 body.append("Проверьте правильность документов и пройдите по ссылке для запроса SES кода: ");
                 body.append("http://localhost:8081/swagger-ui/#/deal-controller/singDocsUsingPOST");
-                docsGenerationService.generatingAllDocs(emailMessage.getApplicationId());
-                mailSender.sendEmailWithAttachment(emailMessage.getAddress(), "Your loan documents", body.toString(), pathToAttachments);
+                mailSender.sendEmailWithAttachment(emailMessage.getAddress(), "Your loan documents", body.toString(), emailMessage.getApplicationId());
                 break;
 
             case SEND_SES:
@@ -75,10 +65,8 @@ public class KafkaListeners {
                 break;
 
             case APPLICATION_DENIED:
-                body = new StringBuilder("Вы ввели неверный SES код для заявки номер "  + emailMessage.getApplicationId() + "\n");
-                body.append("Пройдите по ссылке и повторите попытку ввода SES кода из письма с темой \"Your SES code\": ");
-                body.append("http://localhost:8081/swagger-ui/#/deal-controller/receiveSesCodeUsingPOST");
-                mailSender.sendEmail(emailMessage.getAddress(), "!!Wrong SES code!!", body.toString());
+                body = new StringBuilder("Ваша заявка с номером "  + emailMessage.getApplicationId() + " отклонена\n");
+                mailSender.sendEmail(emailMessage.getAddress(), "Application denied!", body.toString());
                 break;
         }
     }

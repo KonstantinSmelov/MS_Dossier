@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
-@FeignClient(name="deal-service-client", url = "${URL.toDeal}")
+@FeignClient(name="deal-service-client", url = "${URL.to.deal}")
 public interface DealClient {
 
     @PostMapping("/deal/application/{applicationId}")

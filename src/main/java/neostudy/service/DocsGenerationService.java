@@ -76,7 +76,7 @@ public class DocsGenerationService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        log.debug("generateLoanContractFile(): создан файл: {}", file.getAbsoluteFile() + file.getName());
+        log.debug("generateLoanContractFile(): создан временный файл: {}", file.getAbsoluteFile() + file.getName());
 
         try (FileWriter fileWriter = new FileWriter(file)) {
             file.createNewFile();
@@ -107,7 +107,7 @@ public class DocsGenerationService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        log.debug("generateLoanPaymentFile(): создан файл {}", file.getAbsoluteFile() + file.getName());
+        log.debug("generateLoanPaymentFile(): создан временный файл {}", file.getAbsoluteFile() + file.getName());
 
         try (FileWriter fileWriter = new FileWriter(file)) {
             file.createNewFile();

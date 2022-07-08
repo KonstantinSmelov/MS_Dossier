@@ -32,21 +32,21 @@ public class KafkaListeners {
             case FINISH_REGISTRATION:
                 body = new StringBuilder("Заявка номер " + emailMessage.getApplicationId() + " одобрена!\n");
                 body.append("Для продолжения оформления пройдите по ссылке: ");
-                body.append("http://localhost:8081/swagger-ui/#/deal-controller/choosingApplicationUsingPUT");
+                body.append("http://localhost:8090/swagger-ui/#/gateway-controller/choosingApplicationUsingPUT");
                 mailSender.sendEmail(emailMessage.getAddress(), "Finish registration", body.toString());
                 break;
 
             case CREATE_DOCUMENTS:
                 body = new StringBuilder("Заявка номер " + emailMessage.getApplicationId() + " прошла проверку!\n");
                 body.append("Для продолжения пройдите по ссылке для формирования пакета документов: ");
-                body.append("http://localhost:8081/swagger-ui/#/deal-controller/sendDocsUsingPOST");
+                body.append("http://localhost:8090/swagger-ui/#/gateway-controller/sendDocsUsingPOST");
                 mailSender.sendEmail(emailMessage.getAddress(), "Create documents", body.toString());
                 break;
 
             case SEND_DOCUMENTS:
                 body = new StringBuilder("Вам высланы доументы по заявке номер " + emailMessage.getApplicationId() + "\n");
                 body.append("Проверьте правильность документов и пройдите по ссылке для запроса SES кода: ");
-                body.append("http://localhost:8081/swagger-ui/#/deal-controller/singDocsUsingPOST");
+                body.append("http://localhost:8090/swagger-ui/#/gateway-controller/singDocsUsingPOST");
                 mailSender.sendEmailWithAttachment(emailMessage.getAddress(), "Your loan documents", body.toString(), emailMessage.getApplicationId());
                 break;
 
@@ -54,7 +54,7 @@ public class KafkaListeners {
                 Integer sesCode = dealClient.getSummaryAppInfoFromDeal(emailMessage.getApplicationId()).getSesCode();
                 body = new StringBuilder("Для заявки номер " + emailMessage.getApplicationId() + " SES код: " + sesCode + "\n");
                 body.append("Пройдите по ссылке и введите SES код: ");
-                body.append("http://localhost:8081/swagger-ui/#/deal-controller/receiveSesCodeUsingPOST");
+                body.append("http://localhost:8090/swagger-ui/#/gateway-controller/receiveSesCodeUsingPOST");
                 mailSender.sendEmail(emailMessage.getAddress(), "Your SES code", body.toString());
                 break;
 
@@ -65,7 +65,7 @@ public class KafkaListeners {
                 break;
 
             case APPLICATION_DENIED:
-                body = new StringBuilder("Ваша заявка с номером "  + emailMessage.getApplicationId() + " отклонена\n");
+                body = new StringBuilder("Ваша заявка с номером " + emailMessage.getApplicationId() + " отклонена\n");
                 mailSender.sendEmail(emailMessage.getAddress(), "Application denied!", body.toString());
                 break;
         }

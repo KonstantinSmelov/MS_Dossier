@@ -5,13 +5,13 @@ spring:
       matching-strategy: ant_path_matcher
 
   kafka:
-    bootstrap-servers: 127.0.0.1:9092
+    bootstrap-servers: kafka:9092
 
   mail:
     host: smtp.mail.ru
     port: 465
-    username:  #TODO: delete before committing
-    password: 
+    username: superbank@internet.ru #TODO: delete before committing
+    password: 94BfjdpVEvAsacISTE2D
     properties:
       mail.transport.protocol: smtp
       mail.smtp.auth: true
@@ -29,4 +29,4 @@ logging:
 
 services:
   deal:
-    url: http://localhost:8081
+    url: http://deal:8081

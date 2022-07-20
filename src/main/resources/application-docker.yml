@@ -1,6 +1,7 @@
+spring:
   kafka:
     bootstrap-servers: kafka:9092
 
- services:
+services:
   deal:
     url: http://deal:8081

@@ -1,4 +1,4 @@
-# MS-Conveyor
+# MS-Dossier
 
 [![Build status](https://github.com/KonstantinSmelov/Dossier/actions/workflows/maven.yml/badge.svg)](https://github.com/KonstantinSmelov/Dossier/actions/workflows/maven.yml)
 [![codecov](https://codecov.io/gh/KonstantinSmelov/Dossier/branch/mvp6/graph/badge.svg)](https://codecov.io/gh/KonstantinSmelov/Dossier)

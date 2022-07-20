@@ -1,0 +1,6 @@
+  kafka:
+    bootstrap-servers: kafka:9092
+
+ services:
+  deal:
+    url: http://deal:8081

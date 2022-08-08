@@ -1,0 +1,32 @@
+spring:
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+  kafka:
+    bootstrap-servers: localhost:9092
+
+  mail:
+    host: smtp.mail.ru
+    port: 465
+    username: superbank@internet.ru #TODO: delete before committing
+    password: 94BfjdpVEvAsacISTE2D
+    properties:
+      mail.transport.protocol: smtp
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+      mail.smtp.ssl.enable: true
+      mail.smtp.ssl.trust: smtp.mail.ru
+      mail.debug: true
+
+server:
+  port: 8083
+
+logging:
+  level:
+    neostudy: DEBUG
+
+services:
+  deal:
+    url: http://localhost:8081
